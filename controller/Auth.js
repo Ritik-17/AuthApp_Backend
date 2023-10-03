@@ -1,4 +1,5 @@
 const user = require('../models/user');
+const user = require('../models/user');
 const bcrypt = require('bcrypt');
 
 exports.signup = async(req, res) => {
@@ -7,7 +8,7 @@ exports.signup = async(req, res) => {
         const {name, email, password, role} = req.body;
 
         // check if user is already existed
-        const existingUser = await user.findOne()
+        const existingUser = await user.findOne({email})
         if(existingUser){
             return res.status(400).json({
                 success:false,
@@ -41,5 +42,34 @@ exports.signup = async(req, res) => {
             success:false,
             message:'User cannot be registered please try again later'
         })
+    }
+}
+
+exports.login = async(req, res) => {
+    try{
+        // data fetch
+        const {email, password} = req.body;
+
+        // To check if user has entered email or password
+        if(!email || !password){
+            return res.status(400).json({
+                success:false,
+                message:"Please fill all the details",
+            });
+        }
+        
+        // To check whether he is registered user
+        const user = await user.findOne({email});
+        // if not registered user
+        if(!user){
+            return res.status(401).json({
+                success:false,
+                message:"User is not registered"
+            });
+        }
+
+    }
+    catch(err){
+
     }
 }
